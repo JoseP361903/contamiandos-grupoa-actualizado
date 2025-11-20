@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("contamiandos-grupoa-actualizado")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b325556d9306242a8cc4ac08a49b4f8d4dc7652")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4127b29c1927b3c46c8d614eb3f7bdf71285a1c2")]
 [assembly: System.Reflection.AssemblyProductAttribute("contamiandos-grupoa-actualizado")]
 [assembly: System.Reflection.AssemblyTitleAttribute("contamiandos-grupoa-actualizado")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

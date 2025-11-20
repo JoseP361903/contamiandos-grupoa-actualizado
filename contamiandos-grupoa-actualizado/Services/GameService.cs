@@ -251,12 +251,24 @@
                 throw new InvalidOperationException("Need 5 players to start");
             }
 
-            // Actualizar el estado del juego a "rounds"
+            // ASIGNAR ROLES ALEATORIAMENTE
+            var rol = rols(game.Players.Count);
+            var roundPlayer = game.Players.OrderBy(x => Guid.NewGuid()).ToList();
+            var enemies = new List<string>();
+
+            int enemyCount = rol["enemy"];
+            for (int i = 0; i < enemyCount; i++)
+            {
+                enemies.Add(roundPlayer[i]);
+            }
+
+            // Actualizar el estado del juego a "rounds" y asignar enemigos
             var filter = Builders<Game_Entity>.Filter.Eq(g => g.GameId, gameId);
             var update = Builders<Game_Entity>.Update
                 .Set(g => g.Status, "rounds")
                 .Set(g => g.StartedAt, DateTime.UtcNow)
-                .Set(g => g.UpdatedAt, DateTime.UtcNow);
+                .Set(g => g.UpdatedAt, DateTime.UtcNow)
+                .Set(g => g.Enemies, enemies); // Asignar los enemigos (psicópatas)
 
             var result = await _gamesCollection.UpdateOneAsync(filter, update);
 
@@ -266,6 +278,43 @@
             }
         }
 
+        // agregue esto jp
+        private Dictionary<string, int> rols(int numberPlayers)
+        {
+            var rol = new Dictionary<string, int>();
+
+            switch (numberPlayers)
+            {
+                case 5:
+                    rol.Add("exemplar", 3);
+                    rol.Add("enemy", 2);
+                    break;
+                case 6:
+                    rol.Add("exemplar", 4);
+                    rol.Add("enemy", 2);
+                    break;
+                case 7:
+                    rol.Add("exemplar", 4);
+                    rol.Add("enemy", 3);
+                    break;
+                case 8:
+                    rol.Add("exemplar", 5);
+                    rol.Add("enemy", 3);
+                    break;
+                case 9:
+                    rol.Add("exemplar", 6);
+                    rol.Add("enemy", 3);
+                    break;
+                case 10:
+                    rol.Add("exemplar", 6);
+                    rol.Add("enemy", 4);
+                    break;
+                default:
+                    throw new ArgumentException($"Need more players");
+            }
+
+            return rol;
+        }
         // MÉTODO CORREGIDO - GetRoundsAsync
         public async Task<List<Round>> GetRoundsAsync(string gameId, string player, string password)
         {

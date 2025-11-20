@@ -7,12 +7,12 @@
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|d:\\redes en los negocios\\proyecto a\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|d:\\redes en los negocios\\proyecto a\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\controllers\\gamescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\controllers\\gamescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|d:\\redes en los negocios\\proyecto a\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|d:\\redes en los negocios\\proyecto a\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\round.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -46,13 +46,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "gamesController.cs",
               "DocumentMoniker": "D:\\Redes en los negocios\\Proyecto A\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
               "ToolTip": "D:\\Redes en los negocios\\Proyecto A\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
-              "ViewState": "AgIAAKsCAAAAAAAAAAAwwMACAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAALECAAAAAAAAAAAAAFgBAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T03:39:30.41Z",
               "EditorCaption": ""
@@ -65,14 +65,14 @@
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Services\\GameService.cs",
               "ToolTip": "D:\\Redes en los negocios\\Proyecto A\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Services\\GameService.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Services\\GameService.cs",
-              "ViewState": "AgIAAKgBAAAAAAAAAAAowLIBAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAsBAAAAAAAAAAAUwBgBAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T03:38:44.474Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Game_Entity.cs",
               "DocumentMoniker": "D:\\Redes en los negocios\\Proyecto A\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
@@ -80,8 +80,7 @@
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-19T03:36:21.19Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-19T03:36:21.19Z"
             },
             {
               "$type": "Document",
