@@ -50,6 +50,9 @@ namespace contaminados_grupoa_backend.Models
         [BsonElement("currentRoundGroup")]
         public List<string> CurrentRoundGroup { get; set; } = new List<string>();
 
+        [BsonElement("failedVoteCount")]
+        public int? FailedVoteCount { get; set; } = 0;
+
         [BsonElement("currentRoundVotes")]
         public List<bool> CurrentRoundVotes { get; set; } = new List<bool>();
 

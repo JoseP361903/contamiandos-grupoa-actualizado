@@ -49,7 +49,7 @@
         public async Task<Game_Entity> GetGameByIdAsync(string gameId)
         {
             return await _gamesCollection
-                .Find(g => g.GameId == gameId)  // ← SOLO GameId
+                .Find(g => g.GameId == gameId)  
                 .FirstOrDefaultAsync();
         }
 
@@ -62,9 +62,9 @@
         }
 
         public async Task<(List<Game_Entity> games, long totalCount)> SearchGamesAsync(
-            string name = null,
-            int page = 0,
-            int limit = 50)
+        string name = null,
+        int page = 0,
+        int limit = 50)
         {
             // Construir filtro
             var filterBuilder = Builders<Game_Entity>.Filter;
@@ -77,20 +77,17 @@
                 filters.Add(nameFilter);
             }
 
-            // Solo buscar juegos que no estén ended
-            var statusFilter = filterBuilder.Ne(g => g.Status, "ended");
-            filters.Add(statusFilter);
 
-            var finalFilter = filterBuilder.And(filters);
+            var finalFilter = filters.Any() ? filterBuilder.And(filters) : filterBuilder.Empty;
 
-            // Aplicar paginación
+            
             var skip = page * limit;
             limit = Math.Min(limit, 100);
 
             // Obtener juegos paginados
             var games = await _gamesCollection
                 .Find(finalFilter)
-                .SortByDescending(g => g.CreatedAt)
+                .SortByDescending(g => g.CreatedAt)  // Ordenar por más recientes primero
                 .Skip(skip)
                 .Limit(limit)
                 .ToListAsync();
@@ -106,7 +103,7 @@
         {
             // CAMBIADO: Solo buscar por GameId
             var game = await _gamesCollection
-                .Find(g => g.GameId == gameId)  // ← SOLO GameId
+                .Find(g => g.GameId == gameId)  
                 .FirstOrDefaultAsync();
 
             if (game == null)
@@ -517,12 +514,17 @@
                 throw new InvalidOperationException($"Players not in game: {string.Join(", ", invalidPlayers)}");
             }
 
+            // Determinar la fase actual basada en votaciones fallidas
+            var failedVoteCount = game.FailedVoteCount ?? 0;
+            var currentPhase = GetVotingPhase(failedVoteCount);
+
             // Actualizar el grupo propuesto
             var filter = Builders<Game_Entity>.Filter.Eq(g => g.GameId, gameId);
             var update = Builders<Game_Entity>.Update
                 .Set(g => g.CurrentRoundGroup, group)
                 .Set(g => g.CurrentRoundStatus, "voting")
-                .Set(g => g.CurrentRoundVotes, new List<bool>()) // Reiniciar votos
+                .Set(g => g.CurrentRoundPhase, currentPhase) 
+                .Set(g => g.CurrentRoundVotes, new List<bool>()) 
                 .Set(g => g.UpdatedAt, DateTime.UtcNow);
 
             await _gamesCollection.UpdateOneAsync(filter, update);
@@ -547,20 +549,13 @@
                 throw new InvalidOperationException("This action is not allowed at this time");
             }
 
-            // Validar que el jugador no ha votado aún
+            // Validar que el jugador no ha votado aún en ESTA FASE de votación
             var existingVote = game.PlayerVotes?.FirstOrDefault(v => v.RoundId == roundId && v.Player == player);
             if (existingVote?.Vote != null)
             {
                 throw new InvalidOperationException("Player has already voted");
             }
 
-            // jp esto eliminelo, te daba el error
-            // if (!game.CurrentRoundGroup.Contains(player))
-            // {
-            //     throw new UnauthorizedAccessException("Not part of the proposed group");
-            // }
-
-            
             if (!game.Players.Contains(player))
             {
                 throw new UnauthorizedAccessException("Player is not part of this game");
@@ -585,29 +580,106 @@
                 .Set(g => g.CurrentRoundVotes, currentVotes)
                 .Set(g => g.UpdatedAt, DateTime.UtcNow);
 
-            // esto agregué jp
+            // Verificar si todos han votado
             if (currentVotes.Count >= game.Players.Count)
             {
                 // Calcular resultado de la votación
                 var approved = currentVotes.Count(v => v) > (currentVotes.Count / 2);
+                var failedVoteCount = game.FailedVoteCount ?? 0;
 
                 if (approved)
                 {
-                    update = update.Set(g => g.CurrentRoundStatus, "waiting-on-group");
+                    // Votación aprobada - proceder a la fase de acciones
+                    // IMPORTANTE: Reiniciar completamente el estado de votación
+                    update = update
+                        .Set(g => g.CurrentRoundStatus, "waiting-on-group")
+                        .Set(g => g.CurrentRoundPhase, "vote1") // ← REINICIAR FASE A vote1
+                        .Set(g => g.FailedVoteCount, 0); // ← REINICIAR CONTADOR A 0
                 }
                 else
                 {
-                    // Si no se aprueba, volver a waiting-on-leader para nueva propuesta
-                    update = update
-                        .Set(g => g.CurrentRoundStatus, "waiting-on-leader")
-                        .Set(g => g.CurrentRoundGroup, new List<string>())
-                        .Set(g => g.CurrentRoundVotes, new List<bool>());
+                    // Votación rechazada - incrementar contador
+                    failedVoteCount++;
+
+                    if (failedVoteCount >= 3)
+                    {
+                        // Tercer rechazo consecutivo - punto para los enemigos
+                        update = update
+                            .Set(g => g.CurrentRoundStatus, "ended")
+                            .Set(g => g.CurrentRoundResult, "enemies")
+                            .Set(g => g.CurrentRoundPhase, "vote1") // ← REINICIAR FASE
+                            .Set(g => g.FailedVoteCount, 0); // ← REINICIAR CONTADOR
+
+                        // Guardar round en historial
+                        var roundHistory = new RoundHistory
+                        {
+                            RoundId = game.CurrentRoundId,
+                            Leader = game.CurrentRoundLeader,
+                            Status = "ended",
+                            Result = "enemies",
+                            Phase = GetVotingPhase(failedVoteCount),
+                            Group = game.CurrentRoundGroup ?? new List<string>(),
+                            Votes = game.CurrentRoundVotes ?? new List<bool>()
+                        };
+
+                        var allRounds = game.AllRounds ?? new List<RoundHistory>();
+                        allRounds.Add(roundHistory);
+                        update = update.Set(g => g.AllRounds, allRounds);
+
+                        // Verificar si el juego debe terminar
+                        if (ShouldEndGame(game, "enemies"))
+                        {
+                            update = update.Set(g => g.Status, "ended");
+                        }
+                        else
+                        {
+                            // Crear nueva ronda
+                            var nextLeader = GetNextLeader(game);
+                            update = update
+                                .Set(g => g.CurrentRoundId, Guid.NewGuid().ToString().ToUpper())
+                                .Set(g => g.CurrentRoundLeader, nextLeader)
+                                .Set(g => g.CurrentRoundStatus, "waiting-on-leader")
+                                .Set(g => g.CurrentRoundResult, "none")
+                                .Set(g => g.CurrentRoundPhase, "vote1")
+                                .Set(g => g.CurrentRoundGroup, new List<string>())
+                                .Set(g => g.CurrentRoundVotes, new List<bool>())
+                                .Set(g => g.CurrentRoundActions, new List<RoundAction>())
+                                .Set(g => g.FailedVoteCount, 0);
+                        }
+                    }
+                    else
+                    {
+                        // Menos de 3 rechazos - permitir nueva propuesta
+                        var nextPhase = GetVotingPhase(failedVoteCount);
+
+                        // Limpiar votos de esta ronda para permitir nueva votación
+                        var updatedPlayerVotes = game.PlayerVotes?.Where(v => v.RoundId != roundId).ToList() ?? new List<PlayerVote>();
+
+                        update = update
+                            .Set(g => g.CurrentRoundStatus, "waiting-on-leader")
+                            .Set(g => g.CurrentRoundPhase, nextPhase)
+                            .Set(g => g.CurrentRoundGroup, new List<string>())
+                            .Set(g => g.CurrentRoundVotes, new List<bool>())
+                            .Set(g => g.PlayerVotes, updatedPlayerVotes)
+                            .Set(g => g.FailedVoteCount, failedVoteCount);
+                    }
                 }
             }
 
             await _gamesCollection.UpdateOneAsync(filter, update);
-
             return await GetRoundAsync(gameId, roundId, player, password);
+        }
+
+        // Método auxiliar para determinar la fase de votación
+        private string GetVotingPhase(int failedVoteCount)
+        {
+            return failedVoteCount switch
+            {
+                0 => "vote1",
+                1 => "vote2",
+                2 => "vote3",
+                _ => "vote1"
+            };
         }
 
         public async Task<Round> SubmitActionAsync(string gameId, string roundId, string player, string password, bool action)
@@ -728,10 +800,13 @@
 
         private string GetNextLeader(Game_Entity game)
         {
-            // Lógica para seleccionar el siguiente líder
-            var currentLeaderIndex = game.Players.IndexOf(game.CurrentRoundLeader);
-            var nextIndex = (currentLeaderIndex + 1) % game.Players.Count;
-            return game.Players[nextIndex];
+            var random = new Random();
+            var availablePlayers = game.Players.Where(p => p != game.CurrentRoundLeader).ToList();
+
+            if (availablePlayers.Count == 0)
+                return game.Players[random.Next(game.Players.Count)];
+
+            return availablePlayers[random.Next(availablePlayers.Count)];
         }
     }
 }
