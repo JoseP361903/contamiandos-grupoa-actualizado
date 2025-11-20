@@ -505,10 +505,16 @@
                 throw new InvalidOperationException("Player has already voted");
             }
 
-            // Validar que el jugador está en el grupo propuesto para esta ronda
-            if (!game.CurrentRoundGroup.Contains(player))
+            // jp esto eliminelo, te daba el error
+            // if (!game.CurrentRoundGroup.Contains(player))
+            // {
+            //     throw new UnauthorizedAccessException("Not part of the proposed group");
+            // }
+
+            
+            if (!game.Players.Contains(player))
             {
-                throw new UnauthorizedAccessException("Not part of the proposed group");
+                throw new UnauthorizedAccessException("Player is not part of this game");
             }
 
             // Agregar el voto
@@ -530,8 +536,8 @@
                 .Set(g => g.CurrentRoundVotes, currentVotes)
                 .Set(g => g.UpdatedAt, DateTime.UtcNow);
 
-            // Verificar si todos han votado
-            if (currentVotes.Count >= game.CurrentRoundGroup.Count)
+            // esto agregué jp
+            if (currentVotes.Count >= game.Players.Count)
             {
                 // Calcular resultado de la votación
                 var approved = currentVotes.Count(v => v) > (currentVotes.Count / 2);

@@ -3,20 +3,21 @@ using contaminados_grupoa_backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// CONFIGURACIÓN CORS - Agrega esto
+// CONFIGURACIÓN CORS CORREGIDA - AGREGAR PUERTO 3000
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+            policy.WithOrigins("http://localhost:3000", "https://localhost:3000",
+                              "http://localhost:5173", "https://localhost:5173")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
         });
 });
 
-// CONFIGURACIÓN PARA BARRAS DIAGONALES FINALES - AGREGA ESTO
+// CONFIGURACIÓN PARA BARRAS DIAGONALES FINALES
 builder.Services.Configure<RouteOptions>(options =>
 {
     options.AppendTrailingSlash = true;
