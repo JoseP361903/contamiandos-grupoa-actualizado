@@ -1,7 +1,47 @@
 [
   {
     "ContainingType": "contaminados_grupoa_backend.Controllers.gamesController",
-    "Method": "GetGames",
+    "Method": "CreateGame",
+    "RelativePath": "api/games",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "contaminados_grupoa_backend.Controllers.GameCreateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 201
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      }
+    ]
+  },
+  {
+    "ContainingType": "contaminados_grupoa_backend.Controllers.gamesController",
+    "Method": "SearchGames",
     "RelativePath": "api/games",
     "HttpMethod": "GET",
     "IsController": true,
@@ -9,11 +49,6 @@
     "Parameters": [
       {
         "Name": "name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "status",
         "Type": "System.String",
         "IsRequired": false
       },
@@ -33,21 +68,40 @@
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
       }
     ]
   },
   {
     "ContainingType": "contaminados_grupoa_backend.Controllers.gamesController",
-    "Method": "CreateGame",
-    "RelativePath": "api/games",
-    "HttpMethod": "POST",
+    "Method": "GetGame",
+    "RelativePath": "api/games/{gameId}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "body",
-        "Type": "System.Text.Json.JsonElement",
+        "Name": "gameId",
+        "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "player",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -72,34 +126,16 @@
           "application/json",
           "text/json"
         ],
-        "StatusCode": 409
-      }
-    ]
-  },
-  {
-    "ContainingType": "contaminados_grupoa_backend.Controllers.gamesController",
-    "Method": "GetGameById",
-    "RelativePath": "api/games/{gameId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "gameId",
-        "Type": "System.String",
-        "IsRequired": true
+        "StatusCode": 401
       },
       {
-        "Name": "player",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -131,8 +167,13 @@
         "IsRequired": false
       },
       {
-        "Name": "body",
-        "Type": "System.Nullable\u00601[[System.Text.Json.JsonElement, System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51]]",
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "request",
+        "Type": "contaminados_grupoa_backend.Controllers.JoinGameRequest",
         "IsRequired": false
       }
     ],
@@ -150,6 +191,24 @@
           "text/json"
         ],
         "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -192,6 +251,16 @@
         "Name": "gameId",
         "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "player",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -199,6 +268,33 @@
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -228,6 +324,16 @@
         "Name": "roundId",
         "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "player",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -235,6 +341,33 @@
         "Type": "System.Void",
         "MediaTypes": [],
         "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
       },
       {
         "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
@@ -271,9 +404,14 @@
         "IsRequired": false
       },
       {
-        "Name": "body",
-        "Type": "System.Text.Json.JsonElement",
-        "IsRequired": true
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "request",
+        "Type": "contaminados_grupoa_backend.Controllers.GroupProposalRequest",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -298,7 +436,43 @@
           "application/json",
           "text/json"
         ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 428
       }
     ]
   },
@@ -326,9 +500,14 @@
         "IsRequired": false
       },
       {
-        "Name": "body",
-        "Type": "System.Text.Json.JsonElement",
-        "IsRequired": true
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "request",
+        "Type": "contaminados_grupoa_backend.Controllers.VoteRequest",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -353,7 +532,43 @@
           "application/json",
           "text/json"
         ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 428
       }
     ]
   },
@@ -381,9 +596,14 @@
         "IsRequired": false
       },
       {
-        "Name": "body",
-        "Type": "System.Text.Json.JsonElement",
-        "IsRequired": true
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "request",
+        "Type": "contaminados_grupoa_backend.Controllers.ActionRequest",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -408,7 +628,43 @@
           "application/json",
           "text/json"
         ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 403
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 428
       }
     ]
   },
@@ -429,33 +685,14 @@
         "Name": "player",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 404
-      },
-      {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 428
-      }
-    ]
+    "ReturnTypes": []
   },
   {
     "ContainingType": "contamiandos_grupoa_actualizado.Controllers.WeatherForecastController",

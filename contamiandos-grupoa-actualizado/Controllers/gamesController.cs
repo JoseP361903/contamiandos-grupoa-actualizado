@@ -1,404 +1,922 @@
-﻿namespace contaminados_grupoa_backend.Controllers
-{
-    using contaminados_grupoa_backend.Models;
-    using contaminados_grupoa_backend.Services;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using System.Text.Json;
-    using MongoDB.Driver;
+﻿using contaminados_grupoa_backend.Models;
+using contaminados_grupoa_backend.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
+namespace contaminados_grupoa_backend.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
     public class gamesController : ControllerBase
     {
         private readonly GameService _gameService;
-        private readonly IMongoCollection<Round> _roundsCollection;
 
-        public gamesController(GameService gameService, IMongoDatabase database)
+        public gamesController(GameService gameService)
         {
             _gameService = gameService;
-            _roundsCollection = database.GetCollection<Round>("Rounds");
         }
 
-        // GET /api/games
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateGame([FromBody] GameCreateRequest request)
+        {
+            try
+            {
+                // Validar que el request no sea nulo
+                if (request == null)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Request body is required" });
+                }
+
+                // Validar campos requeridos
+                if (string.IsNullOrWhiteSpace(request.name) || string.IsNullOrWhiteSpace(request.owner))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Name and Owner are required" });
+                }
+
+                // Validar longitud del nombre
+                if (request.name.Trim().Length < 3 || request.name.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Name must be between 3 and 20 characters" });
+                }
+
+                // Validar longitud del owner
+                if (request.owner.Trim().Length < 3 || request.owner.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Owner must be between 3 and 20 characters" });
+                }
+
+                // Validar password si existe
+                if (!string.IsNullOrEmpty(request.password) &&
+                    (request.password.Trim().Length < 3 || request.password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                // Crear el juego
+                var game = await _gameService.CreateGameAsync(
+                    request.name.Trim(),
+                    request.owner.Trim(),
+                    request.password?.Trim()
+                );
+
+                // Preparar respuesta - CORREGIDO: El frontend espera data directamente
+                var gameData = new
+                {
+                    id = game.GameId,
+                    name = game.Name,
+                    status = game.Status,
+                    password = !string.IsNullOrEmpty(game.Password),
+                    currentRound = game.CurrentRoundId,
+                    players = game.Players,
+                    enemies = game.Enemies
+                };
+
+                var response = new
+                {
+                    status = 201,
+                    msg = "Game Created",
+                    data = gameData  // ← CORREGIDO: Enviar objeto directo, no array
+                };
+
+                return StatusCode(201, response);
+            }
+            catch (InvalidOperationException ex) when (ex.Message == "Asset already exists")
+            {
+                return Conflict(new { status = 409, msg = "Asset already exists" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+            }
+        }
+
         [HttpGet]
-        public async Task<IActionResult> GetGames(
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SearchGames(
             [FromQuery] string name = null,
-            [FromQuery] string status = null,
             [FromQuery] int page = 0,
             [FromQuery] int limit = 50)
         {
             try
             {
-                if (page < 0 || page > 50) page = 0;
-                if (limit < 1 || limit > 50) limit = 50;
+                // Validar parámetros
+                if (page < 0)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Page must be 0 or greater" });
+                }
 
-                var games = await _gameService.SearchGamesAsync(name, status, page, limit);
+                if (limit < 0 || limit > 100)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Limit must be between 0 and 100" });
+                }
 
-                var response = new BaseResponse<List<Game_Entity>>(
-                    200,
-                    games.Any() ? "Games found" : "No games found",
-                    games
-                );
+                // Buscar juegos (solo por nombre)
+                var (games, totalCount) = await _gameService.SearchGamesAsync(name, page, limit);
+
+                // CORREGIDO: Envolver en estructura { data: array } que espera el frontend
+                var result = games.Select(game => new
+                {
+                    id = game.GameId,
+                    name = game.Name,
+                    status = game.Status,
+                    password = !string.IsNullOrEmpty(game.Password),
+                    currentRound = game.CurrentRoundId,
+                    players = game.Players,
+                    enemies = game.Enemies
+                }).ToList();
+
+                var response = new
+                {
+                    status = 200,
+                    msg = $"Search returned {result.Count} results",
+                    data = result  // ← CORREGIDO: Envolver en data
+                };
 
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
 
-        // GET /api/games/{gameId}
-        [HttpGet("{gameId}")]
-        public async Task<IActionResult> GetGameById(
+        // NUEVO ENDPOINT: Obtener juego específico con autenticación
+        [HttpGet("{gameId}/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetGame(
             [FromRoute] string gameId,
-            [FromHeader(Name = "player")] string playerName)
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(playerName))
+                // Validar headers requeridos
+                if (string.IsNullOrWhiteSpace(player))
                 {
-                    return BadRequest(new BaseResponse<object>(400, "Player header is required", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                var game = await _gameService.GetGameByIdAsync(gameId);
-                if (game == null)
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
-                    return NotFound(new BaseResponse<object>(404, "Game Not Found", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
                 }
 
-                // Crear safe game como en SpringBoot
-                var safeGame = new Game_Entity
+                // Validar password solo si se proporciona
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
                 {
-                    id = game.id,
-                    name = game.name,
-                    status = game.status,
-                    owner = game.owner,
-                    players = game.players,
-                    currentRound = game.currentRound,
-                    createdAt = game.createdAt,
-                    updatedAt = game.updatedAt,
-                    password = game.password,
-                    enemies = game.enemies != null && game.enemies.Contains(playerName)
-                            ? game.enemies
-                            : new List<string>()
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                // Obtener juego con autenticación
+                var game = await _gameService.GetGameWithAuthAsync(gameId, player.Trim(), password?.Trim());
+
+                // Determinar si mostrar enemies (solo si el player es un enemy)
+                var showEnemies = game.Enemies.Contains(player);
+
+                // Preparar respuesta
+                var response = new
+                {
+                    status = 200,
+                    msg = "Game Found",
+                    data = new
+                    {
+                        id = game.GameId,
+                        name = game.Name,
+                        status = game.Status,
+                        password = !string.IsNullOrEmpty(game.Password),
+                        currentRound = game.CurrentRoundId,
+                        players = game.Players,
+                        enemies = showEnemies ? game.Enemies : new List<string>(),
+                        owner = game.Owner  // ← AGREGA ESTA LÍNEA
+                    }
                 };
 
-                // IMPORTANTE: passwordValue debe ser null en la respuesta
-                safeGame.passwordValue = null;
-
-                return Ok(new BaseResponse<Game_Entity>(200, "Game found", safeGame));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
-            }
-        }
-
-        // POST /api/games
-        [HttpPost]
-        public async Task<IActionResult> CreateGame([FromBody] JsonElement body)
-        {
-            try
-            {
-                string name = body.TryGetProperty("name", out var nameProp)
-                    ? nameProp.GetString()?.Trim()
-                    : null;
-
-                string owner = body.TryGetProperty("owner", out var ownerProp)
-                    ? ownerProp.GetString()?.Trim()
-                    : null;
-
-                // Manejar passwordValue o password como en SpringBoot
-                string passwordValue = null;
-                if (body.TryGetProperty("passwordValue", out var pw1) && pw1.ValueKind == JsonValueKind.String)
-                {
-                    passwordValue = pw1.GetString()?.Trim();
-                }
-                else if (body.TryGetProperty("password", out var pw2) && pw2.ValueKind == JsonValueKind.String)
-                {
-                    passwordValue = pw2.GetString()?.Trim();
-                }
-
-                // Validaciones
-                if (string.IsNullOrWhiteSpace(name) || name.Length < 3 || name.Length > 20)
-                {
-                    return BadRequest(new BaseResponse<object>(400, "Must be 3 to 20 characters.", null));
-                }
-
-                if (string.IsNullOrWhiteSpace(owner) || owner.Length < 3 || owner.Length > 20)
-                {
-                    return BadRequest(new BaseResponse<object>(400, "Must be 3 to 20 characters.", null));
-                }
-
-                if (!string.IsNullOrEmpty(passwordValue) && (passwordValue.Length < 3 || passwordValue.Length > 20))
-                {
-                    return BadRequest(new BaseResponse<object>(400, "Must be 3 to 20 characters.", null));
-                }
-
-                var game = await _gameService.CreateGameAsync(name, owner, passwordValue);
-
-                return Ok(new BaseResponse<Game_Entity>(201, "Game Created", game));
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "Asset already exists")
-            {
-                return Conflict(new BaseResponse<object>(409, "Asset already exists", null));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
-            }
-        }
-
-        // PUT /api/games/{gameId}
-        [HttpPut("{gameId}")]
-        public async Task<IActionResult> JoinGame(
-            [FromRoute] string gameId,
-            [FromHeader(Name = "player")] string playerHeader,
-            [FromBody] JsonElement? body = null)
-        {
-            try
-            {
-                string playerName = playerHeader;
-
-                if (string.IsNullOrWhiteSpace(playerName) || playerName.Length < 3 || playerName.Length > 20)
-                {
-                    return BadRequest(new BaseResponse<object>(400, "Must be 3 to 20 characters.", null));
-                }
-
-                string passwordValue = null;
-                if (body.HasValue)
-                {
-                    if (body.Value.TryGetProperty("passwordValue", out var pw1) && pw1.ValueKind == JsonValueKind.String)
-                    {
-                        passwordValue = pw1.GetString()?.Trim();
-                    }
-                    else if (body.Value.TryGetProperty("password", out var pw2) && pw2.ValueKind == JsonValueKind.String)
-                    {
-                        passwordValue = pw2.GetString()?.Trim();
-                    }
-                }
-
-                var game = await _gameService.JoinGameAsync(gameId, playerName, passwordValue);
-
-                return Ok(new BaseResponse<Game_Entity>(200, "Joined successfully", game));
+                return Ok(response);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound(new BaseResponse<object>(404, "Game not found", null));
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPut("{gameId}/")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
+        public async Task<IActionResult> JoinGame(
+        [FromRoute] string gameId,
+        [FromHeader] string player,
+        [FromHeader(Name = "password")] string password = null,
+        [FromBody] JoinGameRequest request = null)
+        {
+            try
+            {
+                // Validar headers requeridos
+                if (string.IsNullOrWhiteSpace(player))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
+                }
+
+                // Validar request body
+                if (request == null || string.IsNullOrWhiteSpace(request.player))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player in request body is required" });
+                }
+
+                // Validar longitudes
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header must be between 3 and 20 characters" });
+                }
+
+                if (request.player.Trim().Length < 3 || request.player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player in request body must be between 3 and 20 characters" });
+                }
+
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                // Unirse al juego
+                var game = await _gameService.JoinGameAsync(
+                    gameId,
+                    player.Trim(),
+                    password?.Trim(),
+                    request.player.Trim()
+                );
+
+                // Determinar si mostrar enemies (solo si el player que hace la request es un enemy)
+                var showEnemies = game.Enemies.Contains(player);
+
+                // CORREGIDO: El frontend espera data como array de un elemento
+                var gameData = new
+                {
+                    id = game.GameId,
+                    name = game.Name,
+                    status = game.Status,
+                    password = !string.IsNullOrEmpty(game.Password),
+                    currentRound = game.CurrentRoundId,
+                    players = game.Players,
+                    enemies = showEnemies ? game.Enemies : new List<string>(),
+                    owner = game.Owner  // ← AGREGA ESTA LÍNEA
+                };
+
+                var response = new
+                {
+                    status = 200,
+                    msg = "Joined Game",
+                    data = new[] { gameData }
+                };
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
             }
             catch (InvalidOperationException ex)
             {
                 switch (ex.Message)
                 {
+                    case "Asset already exists":
+                        return Conflict(new { status = 409, msg = "Asset already exists" });
+                    case "This action is not allowed at this time":
+                        return StatusCode(428, new { status = 428, msg = "This action is not allowed at this time" });
                     case "Game is full":
-                        return StatusCode(428, new BaseResponse<object>(428, "Game is full", null));
-                    case "Player is already part of the game":
-                        return Conflict(new BaseResponse<object>(409, "Player is already part of the game", null));
+                        return StatusCode(428, new { status = 428, msg = "Game is full" });
                     default:
-                        return BadRequest(new BaseResponse<object>(400, ex.Message, null));
+                        return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
                 }
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return StatusCode(403, new BaseResponse<object>(403, ex.Message, null));
             }
             catch (Exception ex)
             {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
 
-        // HEAD /api/games/{gameId}/start
         [HttpHead("{gameId}/start")]
         public async Task<IActionResult> StartGame(
             [FromRoute] string gameId,
-            [FromHeader(Name = "player")] string playerHeader)
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(playerHeader))
+                // Validar headers requeridos
+                if (string.IsNullOrWhiteSpace(player))
                 {
-                    Response.Headers.Append("msg", "Player header is required");
-                    return BadRequest();
+                    Response.Headers.Append("X-msg", "Player header is required");
+                    return StatusCode(400);
                 }
 
-                await _gameService.StartGameAsync(gameId, playerHeader);
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    Response.Headers.Append("X-msg", "Player must be between 3 and 20 characters");
+                    return StatusCode(400);
+                }
+
+                // Validar password solo si se proporciona
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    Response.Headers.Append("X-msg", "Password must be between 3 and 20 characters");
+                    return StatusCode(400);
+                }
+
+                // Iniciar el juego
+                await _gameService.StartGameAsync(gameId, player.Trim(), password?.Trim());
+
+                // Respuesta exitosa - HEAD no tiene body
                 return Ok();
             }
             catch (KeyNotFoundException)
             {
-                Response.Headers.Append("msg", "Game not found");
+                Response.Headers.Append("X-msg", "Game not found");
                 return NotFound();
             }
             catch (UnauthorizedAccessException ex)
             {
-                Response.Headers.Append("msg", ex.Message);
-                return StatusCode(403);
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        Response.Headers.Append("X-msg", "Invalid credentials");
+                        return Unauthorized();
+                    case "Only the game owner can start the game":
+                        Response.Headers.Append("X-msg", "Only the game owner can start the game");
+                        return StatusCode(403);
+                    case "Password required":
+                        Response.Headers.Append("X-msg", "Password required");
+                        return Unauthorized();
+                    default:
+                        Response.Headers.Append("X-msg", ex.Message);
+                        return Unauthorized();
+                }
             }
             catch (InvalidOperationException ex)
             {
                 switch (ex.Message)
                 {
-                    case "Need 5 players to start":
-                        Response.Headers.Append("msg", "Need 5 players to start");
-                        return StatusCode(428);
                     case "Game already started":
-                        Response.Headers.Append("msg", "Game already started");
+                        Response.Headers.Append("X-msg", "Game already started");
                         return StatusCode(409);
+                    case "Need 5 players to start":
+                        Response.Headers.Append("X-msg", "Need 5 players to start");
+                        return StatusCode(428);
                     default:
-                        Response.Headers.Append("msg", ex.Message);
-                        return BadRequest();
+                        Response.Headers.Append("X-msg", ex.Message);
+                        return StatusCode(400);
                 }
             }
             catch (Exception ex)
             {
-                Response.Headers.Append("msg", $"Error: {ex.Message}");
-                return BadRequest();
+                Response.Headers.Append("X-msg", $"Client Error: {ex.Message}");
+                return StatusCode(400);
             }
         }
 
-        // ========== ENDPOINTS DE ROUNDS ==========
-
-        // GET /api/games/{gameId}/rounds
         [HttpGet("{gameId}/rounds")]
-        public async Task<IActionResult> GetRounds([FromRoute] string gameId)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetRounds(
+            [FromRoute] string gameId,
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null)
         {
             try
             {
-                var rounds = await _roundsCollection.Find(r => r.gameId == gameId).ToListAsync();
-                return Ok(new BaseResponse<List<Round>>(200, "Results found", rounds));
+                // Validar headers requeridos
+                if (string.IsNullOrWhiteSpace(player))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
+                }
+
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
+                }
+
+                // Validar password solo si se proporciona
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                // Obtener las rondas
+                var rounds = await _gameService.GetRoundsAsync(gameId, player.Trim(), password?.Trim());
+
+                // Preparar respuesta
+                var response = new
+                {
+                    status = 200,
+                    msg = rounds.Count == 0 ? "No rounds found" : "Rounds found",
+                    data = rounds.Select(round => new
+                    {
+                        id = round.RoundId,
+                        leader = round.Leader,
+                        status = round.Status,
+                        result = round.Result,
+                        phase = round.Phase,
+                        group = round.Group,
+                        votes = round.Votes
+                    }).ToList()
+                };
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
 
-        // GET /api/games/{gameId}/rounds/{roundId}
         [HttpGet("{gameId}/rounds/{roundId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetRound(
             [FromRoute] string gameId,
-            [FromRoute] string roundId)
+            [FromRoute] string roundId,
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null)
         {
             try
             {
-                var round = await _roundsCollection.Find(r => r.id == roundId && r.gameId == gameId).FirstOrDefaultAsync();
-                if (round == null)
+                // Validar headers requeridos
+                if (string.IsNullOrWhiteSpace(player))
                 {
-                    return NotFound(new BaseResponse<object>(404, "Round not found", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                return Ok(new BaseResponse<Round>(200, "Round found", round));
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
+                }
+
+                // Validar password solo si se proporciona
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                // Obtener la ronda específica
+                var round = await _gameService.GetRoundAsync(gameId, roundId, player.Trim(), password?.Trim());
+
+                // Preparar respuesta
+                var response = new
+                {
+                    status = 200,
+                    msg = "Round found",
+                    data = new
+                    {
+                        id = round.RoundId,
+                        leader = round.Leader,
+                        status = round.Status,
+                        result = round.Result,
+                        phase = round.Phase,
+                        group = round.Group,
+                        votes = round.Votes
+                    }
+                };
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
 
-        // PATCH /api/games/{gameId}/rounds/{roundId}
+        // NUEVOS ENDPOINTS PARA RONDAS
+
         [HttpPatch("{gameId}/rounds/{roundId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
         public async Task<IActionResult> ProposeGroup(
             [FromRoute] string gameId,
             [FromRoute] string roundId,
-            [FromHeader(Name = "player")] string playerHeader,
-            [FromBody] JsonElement body)
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null,
+            [FromBody] GroupProposalRequest request = null)
         {
             try
             {
-                string playerFromBody = body.TryGetProperty("player", out var playerProp)
-                    ? playerProp.GetString()
-                    : null;
-
-                string playerName = !string.IsNullOrWhiteSpace(playerHeader)
-                    ? playerHeader.Trim()
-                    : (!string.IsNullOrWhiteSpace(playerFromBody) ? playerFromBody.Trim() : null);
-
-                if (string.IsNullOrWhiteSpace(playerName))
+                // Validaciones básicas
+                if (string.IsNullOrWhiteSpace(player))
                 {
-                    return BadRequest(new BaseResponse<object>(400,
-                        "Player name is required (header 'player' or body.player)", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                var round = await _roundsCollection.Find(r => r.id == roundId && r.gameId == gameId).FirstOrDefaultAsync();
-                if (round == null)
+                if (request?.group == null || !request.group.Any())
                 {
-                    return NotFound(new BaseResponse<object>(404, "Round not found", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Group is required" });
                 }
 
-                // Validar estado
-                if (round.status != "waiting-on-leader")
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
-                    return BadRequest(new BaseResponse<object>(400, "Cannot propose group in current state", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
                 }
 
-                // Validar líder
-                if (round.leader != playerName)
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
                 {
-                    return BadRequest(new BaseResponse<object>(400, "Only leader can propose group", null));
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Leer grupo
-                List<string> group = new List<string>();
-                if (body.TryGetProperty("group", out var groupProp) && groupProp.ValueKind == JsonValueKind.Array)
+                // Validar cada jugador en el grupo
+                foreach (var groupPlayer in request.group)
                 {
-                    foreach (var item in groupProp.EnumerateArray())
+                    if (groupPlayer.Trim().Length < 3 || groupPlayer.Trim().Length > 20)
                     {
-                        if (item.ValueKind == JsonValueKind.String)
-                        {
-                            group.Add(item.GetString());
-                        }
+                        return BadRequest(new { status = 400, msg = "Client Error: Each player in group must be between 3 and 20 characters" });
                     }
                 }
 
-                if (group.Count == 0)
-                {
-                    return BadRequest(new BaseResponse<object>(400, "Group cannot be empty", null));
-                }
+                // Proponer grupo
+                var round = await _gameService.ProposeGroupAsync(
+                    gameId, roundId, player.Trim(), password?.Trim(), request.group);
 
-                // Obtener juego para validaciones
-                var game = await _gameService.GetGameByIdAsync(gameId);
-                if (game == null)
+                var response = new
                 {
-                    return NotFound(new BaseResponse<object>(404, "Game not found", null));
-                }
-
-                // Calcular tamaño requerido (misma lógica SpringBoot)
-                int playersCount = game.players.Count;
-                long completedRounds = await _roundsCollection.CountDocumentsAsync(r => r.gameId == gameId && r.status == "ended");
-                int decade = (int)Math.Min(completedRounds + 1, 5);
-
-                var groupSizes = new Dictionary<int, Dictionary<int, int>>
-                {
-                    [1] = new() { [5] = 2, [6] = 2, [7] = 2, [8] = 3, [9] = 3, [10] = 3 },
-                    [2] = new() { [5] = 3, [6] = 3, [7] = 3, [8] = 4, [9] = 4, [10] = 4 },
-                    [3] = new() { [5] = 2, [6] = 4, [7] = 3, [8] = 4, [9] = 4, [10] = 4 },
-                    [4] = new() { [5] = 3, [6] = 3, [7] = 4, [8] = 5, [9] = 5, [10] = 5 },
-                    [5] = new() { [5] = 3, [6] = 4, [7] = 4, [8] = 5, [9] = 5, [10] = 5 }
+                    status = 200,
+                    msg = "Group Created",
+                    data = new
+                    {
+                        id = round.RoundId,
+                        leader = round.Leader,
+                        status = round.Status,
+                        result = round.Result,
+                        phase = round.Phase,
+                        group = round.Group,
+                        votes = round.Votes
+                    }
                 };
 
-                int requiredSize = groupSizes[decade].GetValueOrDefault(playersCount, 2);
-
-                if (group.Count != requiredSize)
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
                 {
-                    return StatusCode(428, new BaseResponse<object>(428, "Invalid group size", null));
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    case "Only the round leader can propose groups":
+                        return StatusCode(403, new { status = 403, msg = "Only the round leader can propose groups" });
+                    case "Not part of the proposed group":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the proposed group" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
                 }
-
-                // Actualizar round
-                round.group = group;
-                round.status = "voting";
-                round.updatedAt = DateTime.UtcNow;
-
-                await _roundsCollection.ReplaceOneAsync(r => r.id == roundId, round);
-
-                return Ok(new BaseResponse<Round>(200, "Group proposed successfully", round));
+            }
+            catch (InvalidOperationException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Asset already exists":
+                        return Conflict(new { status = 409, msg = "Asset already exists" });
+                    case "This action is not allowed at this time":
+                        return StatusCode(428, new { status = 428, msg = "This action is not allowed at this time" });
+                    case "Group must have between 2 and 6 players":
+                        return BadRequest(new { status = 400, msg = "Group must have between 2 and 6 players" });
+                    case "Player has already voted":
+                        return Conflict(new { status = 409, msg = "Player has already voted" });
+                    case "Player has already submitted an action":
+                        return Conflict(new { status = 409, msg = "Player has already submitted an action" });
+                    default:
+                        return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new BaseResponse<object>(400, $"Error: {ex.Message}", null));
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
+
+        [HttpPost("{gameId}/rounds/{roundId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
+        public async Task<IActionResult> SubmitVote(
+            [FromRoute] string gameId,
+            [FromRoute] string roundId,
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null,
+            [FromBody] VoteRequest request = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(player))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
+                }
+
+                if (request == null)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Vote is required" });
+                }
+
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
+                }
+
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                var round = await _gameService.SubmitVoteAsync(
+                    gameId, roundId, player.Trim(), password?.Trim(), request.vote);
+
+                var response = new
+                {
+                    status = 200,
+                    msg = "Voted successfully",
+                    data = new
+                    {
+                        id = round.RoundId,
+                        leader = round.Leader,
+                        status = round.Status,
+                        result = round.Result,
+                        phase = round.Phase,
+                        group = round.Group,
+                        votes = round.Votes
+                    }
+                };
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    case "Not part of the proposed group":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the proposed group" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Asset already exists":
+                        return Conflict(new { status = 409, msg = "Asset already exists" });
+                    case "This action is not allowed at this time":
+                        return StatusCode(428, new { status = 428, msg = "This action is not allowed at this time" });
+                    case "Player has already voted":
+                        return Conflict(new { status = 409, msg = "Player has already voted" });
+                    default:
+                        return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPut("{gameId}/rounds/{roundId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status428PreconditionRequired)]
+        public async Task<IActionResult> SubmitAction(
+            [FromRoute] string gameId,
+            [FromRoute] string roundId,
+            [FromHeader] string player,
+            [FromHeader(Name = "password")] string password = null,
+            [FromBody] ActionRequest request = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(player))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
+                }
+
+                if (request == null)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Action is required" });
+                }
+
+                // Validar longitud del player
+                if (player.Trim().Length < 3 || player.Trim().Length > 20)
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
+                }
+
+                if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
+                {
+                    return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
+                }
+
+                var round = await _gameService.SubmitActionAsync(
+                    gameId, roundId, player.Trim(), password?.Trim(), request.action);
+
+                var response = new
+                {
+                    status = 200,
+                    msg = "Action registered",
+                    data = new
+                    {
+                        id = round.RoundId,
+                        leader = round.Leader,
+                        status = round.Status,
+                        result = round.Result,
+                        phase = round.Phase,
+                        group = round.Group,
+                        votes = round.Votes
+                    }
+                };
+
+                return Ok(response);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { status = 404, msg = "The specified resource was not found" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Invalid credentials":
+                        return Unauthorized(new { status = 401, msg = "Invalid credentials" });
+                    case "Not part of the game":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the game" });
+                    case "Password required":
+                        return Unauthorized(new { status = 401, msg = "Password required" });
+                    case "Not part of the round group":
+                        return StatusCode(403, new { status = 403, msg = "Not part of the round group" });
+                    default:
+                        return Unauthorized(new { status = 401, msg = ex.Message });
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                switch (ex.Message)
+                {
+                    case "Asset already exists":
+                        return Conflict(new { status = 409, msg = "Asset already exists" });
+                    case "This action is not allowed at this time":
+                        return StatusCode(428, new { status = 428, msg = "This action is not allowed at this time" });
+                    case "Player has already submitted an action":
+                        return Conflict(new { status = 409, msg = "Player has already submitted an action" });
+                    default:
+                        return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
+            }
+        }
+    }
+
+    public class GameCreateRequest
+    {
+        public string name { get; set; }
+        public string owner { get; set; }
+        public string password { get; set; }
+    }
+
+    public class JoinGameRequest
+    {
+        public string player { get; set; }
+    }
+
+    public class GroupProposalRequest
+    {
+        public List<string> group { get; set; }
+    }
+
+    public class VoteRequest
+    {
+        public bool vote { get; set; }
+    }
+
+    public class ActionRequest
+    {
+        public bool action { get; set; }
     }
 }
