@@ -56,19 +56,15 @@ namespace contaminados_grupoa_backend.Models
         [BsonElement("currentRoundVotes")]
         public List<bool> CurrentRoundVotes { get; set; } = new List<bool>();
 
-        // CAMBIO: Usar List<RoundAction> en lugar de Dictionary<string, object>
         [BsonElement("currentRoundActions")]
         public List<RoundAction> CurrentRoundActions { get; set; } = new List<RoundAction>();
 
-        // CAMBIO: Usar List<RoundHistory> en lugar de Dictionary<string, object>
         [BsonElement("allRounds")]
         public List<RoundHistory> AllRounds { get; set; } = new List<RoundHistory>();
 
-        // CAMBIO: Usar List<GroupProposal> en lugar de Dictionary<string, object>
         [BsonElement("groupProposals")]
         public List<GroupProposal> GroupProposals { get; set; } = new List<GroupProposal>();
 
-        // CAMBIO: Usar List<PlayerVote> en lugar de Dictionary<string, object>
         [BsonElement("playerVotes")]
         public List<PlayerVote> PlayerVotes { get; set; } = new List<PlayerVote>();
 
@@ -93,8 +89,6 @@ namespace contaminados_grupoa_backend.Models
         [BsonIgnore]
         public int EnemyCount => Enemies?.Count ?? 0;
     }
-
-    // CLASES AUXILIARES - Agrega estas al final del mismo archivo
 
     public class GroupProposalRequest
     {
@@ -135,7 +129,7 @@ namespace contaminados_grupoa_backend.Models
         public string Player { get; set; }
 
         [BsonElement("vote")]
-        public bool? Vote { get; set; } // null = no ha votado, true = acuerdo, false = desacuerdo
+        public bool? Vote { get; set; }
 
         [BsonElement("timestamp")]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
@@ -147,7 +141,7 @@ namespace contaminados_grupoa_backend.Models
         public string Player { get; set; }
 
         [BsonElement("action")]
-        public bool Action { get; set; } // true = collaborate, false = sabotage
+        public bool Action { get; set; }
 
         [BsonElement("roundId")]
         public string RoundId { get; set; }

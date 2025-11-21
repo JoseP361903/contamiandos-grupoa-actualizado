@@ -24,31 +24,26 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar que el request no sea nulo
                 if (request == null)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Request body is required" });
                 }
 
-                // Validar campos requeridos
                 if (string.IsNullOrWhiteSpace(request.name) || string.IsNullOrWhiteSpace(request.owner))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Name and Owner are required" });
                 }
 
-                // Validar longitud del nombre
                 if (request.name.Trim().Length < 3 || request.name.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Name must be between 3 and 20 characters" });
                 }
 
-                // Validar longitud del owner
                 if (request.owner.Trim().Length < 3 || request.owner.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Owner must be between 3 and 20 characters" });
                 }
 
-                // Validar password si existe
                 if (!string.IsNullOrEmpty(request.password) &&
                     (request.password.Trim().Length < 3 || request.password.Trim().Length > 20))
                 {
@@ -62,7 +57,6 @@ namespace contaminados_grupoa_backend.Controllers
                     request.password?.Trim()
                 );
 
-                // Preparar respuesta - CORREGIDO: El frontend espera data directamente
                 var gameData = new
                 {
                     id = game.GameId,
@@ -78,7 +72,7 @@ namespace contaminados_grupoa_backend.Controllers
                 {
                     status = 201,
                     msg = "Game Created",
-                    data = gameData  // ← CORREGIDO: Enviar objeto directo, no array
+                    data = gameData 
                 };
 
                 return StatusCode(201, response);
@@ -103,7 +97,6 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar parámetros
                 if (page < 0)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Page must be 0 or greater" });
@@ -114,10 +107,8 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Limit must be between 0 and 100" });
                 }
 
-                // Buscar juegos (solo por nombre)
                 var (games, totalCount) = await _gameService.SearchGamesAsync(name, page, limit);
 
-                // CORREGIDO: Envolver en estructura { data: array } que espera el frontend
                 var result = games.Select(game => new
                 {
                     id = game.GameId,
@@ -133,7 +124,7 @@ namespace contaminados_grupoa_backend.Controllers
                 {
                     status = 200,
                     msg = $"Search returned {result.Count} results",
-                    data = result  // ← CORREGIDO: Envolver en data
+                    data = result 
                 };
 
                 return Ok(response);
@@ -144,7 +135,6 @@ namespace contaminados_grupoa_backend.Controllers
             }
         }
 
-        // NUEVO ENDPOINT: Obtener juego específico con autenticación
         [HttpGet("{gameId}/")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -158,31 +148,25 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar headers requeridos
                 if (string.IsNullOrWhiteSpace(player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                // Validar longitud del player
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
                 }
 
-                // Validar password solo si se proporciona
                 if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Obtener juego con autenticación
                 var game = await _gameService.GetGameWithAuthAsync(gameId, player.Trim(), password?.Trim());
 
-                // Determinar si mostrar enemies (solo si el player es un enemy)
                 var showEnemies = game.Enemies.Contains(player);
 
-                // Preparar respuesta
                 var response = new
                 {
                     status = 200,
@@ -196,7 +180,7 @@ namespace contaminados_grupoa_backend.Controllers
                         currentRound = game.CurrentRoundId,
                         players = game.Players,
                         enemies = showEnemies ? game.Enemies : new List<string>(),
-                        owner = game.Owner  // ← AGREGA ESTA LÍNEA
+                        owner = game.Owner 
                     }
                 };
 
@@ -242,19 +226,16 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar headers requeridos
                 if (string.IsNullOrWhiteSpace(player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                // Validar request body
                 if (request == null || string.IsNullOrWhiteSpace(request.player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player in request body is required" });
                 }
 
-                // Validar longitudes
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header must be between 3 and 20 characters" });
@@ -270,7 +251,6 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Unirse al juego
                 var game = await _gameService.JoinGameAsync(
                     gameId,
                     player.Trim(),
@@ -278,10 +258,8 @@ namespace contaminados_grupoa_backend.Controllers
                     request.player.Trim()
                 );
 
-                // Determinar si mostrar enemies (solo si el player que hace la request es un enemy)
                 var showEnemies = game.Enemies.Contains(player);
 
-                // CORREGIDO: El frontend espera data como array de un elemento
                 var gameData = new
                 {
                     id = game.GameId,
@@ -291,7 +269,7 @@ namespace contaminados_grupoa_backend.Controllers
                     currentRound = game.CurrentRoundId,
                     players = game.Players,
                     enemies = showEnemies ? game.Enemies : new List<string>(),
-                    owner = game.Owner  // ← AGREGA ESTA LÍNEA
+                    owner = game.Owner 
                 };
 
                 var response = new
@@ -370,10 +348,8 @@ namespace contaminados_grupoa_backend.Controllers
                     return StatusCode(400);
                 }
 
-                // Iniciar el juego
                 await _gameService.StartGameAsync(gameId, player.Trim(), password?.Trim());
 
-                // Respuesta exitosa - HEAD no tiene body
                 return Ok();
             }
             catch (KeyNotFoundException)
@@ -434,28 +410,23 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar headers requeridos
                 if (string.IsNullOrWhiteSpace(player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                // Validar longitud del player
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
                 }
 
-                // Validar password solo si se proporciona
                 if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Obtener las rondas
                 var rounds = await _gameService.GetRoundsAsync(gameId, player.Trim(), password?.Trim());
 
-                // Preparar respuesta
                 var response = new
                 {
                     status = 200,
@@ -512,28 +483,23 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validar headers requeridos
                 if (string.IsNullOrWhiteSpace(player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
                 }
 
-                // Validar longitud del player
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
                 }
 
-                // Validar password solo si se proporciona
                 if (!string.IsNullOrEmpty(password) && (password.Trim().Length < 3 || password.Trim().Length > 20))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Obtener la ronda específica
                 var round = await _gameService.GetRoundAsync(gameId, roundId, player.Trim(), password?.Trim());
 
-                // Preparar respuesta
                 var response = new
                 {
                     status = 200,
@@ -576,8 +542,6 @@ namespace contaminados_grupoa_backend.Controllers
             }
         }
 
-        // NUEVOS ENDPOINTS PARA RONDAS
-
         [HttpPatch("{gameId}/rounds/{roundId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -595,7 +559,6 @@ namespace contaminados_grupoa_backend.Controllers
         {
             try
             {
-                // Validaciones básicas
                 if (string.IsNullOrWhiteSpace(player))
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player header is required" });
@@ -606,7 +569,6 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Group is required" });
                 }
 
-                // Validar longitud del player
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
@@ -617,7 +579,6 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Password must be between 3 and 20 characters" });
                 }
 
-                // Validar cada jugador en el grupo
                 foreach (var groupPlayer in request.group)
                 {
                     if (groupPlayer.Trim().Length < 3 || groupPlayer.Trim().Length > 20)
@@ -626,7 +587,6 @@ namespace contaminados_grupoa_backend.Controllers
                     }
                 }
 
-                // Proponer grupo
                 var round = await _gameService.ProposeGroupAsync(
                     gameId, roundId, player.Trim(), password?.Trim(), request.group);
 
@@ -820,7 +780,6 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Action is required" });
                 }
 
-                // Validar longitud del player
                 if (player.Trim().Length < 3 || player.Trim().Length > 20)
                 {
                     return BadRequest(new { status = 400, msg = "Client Error: Player must be between 3 and 20 characters" });
