@@ -59,23 +59,30 @@
         }
 
         public async Task<(List<Game_Entity> games, long totalCount)> SearchGamesAsync(
-        string name = null,
-        int page = 0,
-        int limit = 50)
+         string name = null,
+         string status = null,  
+         int page = 0,
+         int limit = 50)
         {
             var filterBuilder = Builders<Game_Entity>.Filter;
             var filters = new List<FilterDefinition<Game_Entity>>();
 
+            // Filtro por nombre
             if (!string.IsNullOrWhiteSpace(name))
             {
                 var nameFilter = filterBuilder.Regex(g => g.Name, new MongoDB.Bson.BsonRegularExpression(name, "i"));
                 filters.Add(nameFilter);
             }
 
+            // Filtro por estado
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                var statusFilter = filterBuilder.Eq(g => g.Status, status.ToLower());
+                filters.Add(statusFilter);
+            }
 
             var finalFilter = filters.Any() ? filterBuilder.And(filters) : filterBuilder.Empty;
 
-            
             var skip = page * limit;
             limit = Math.Min(limit, 100);
 
@@ -727,5 +734,7 @@
 
             return availablePlayers[random.Next(availablePlayers.Count)];
         }
+
+       
     }
 }

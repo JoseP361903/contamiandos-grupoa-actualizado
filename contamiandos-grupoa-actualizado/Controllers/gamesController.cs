@@ -91,9 +91,10 @@ namespace contaminados_grupoa_backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchGames(
-            [FromQuery] string name = null,
-            [FromQuery] int page = 0,
-            [FromQuery] int limit = 50)
+        [FromQuery] string name = null,
+        [FromQuery] string status = null, 
+        [FromQuery] int page = 0,
+        [FromQuery] int limit = 50)
         {
             try
             {
@@ -107,7 +108,21 @@ namespace contaminados_grupoa_backend.Controllers
                     return BadRequest(new { status = 400, msg = "Client Error: Limit must be between 0 and 100" });
                 }
 
-                var (games, totalCount) = await _gameService.SearchGamesAsync(name, page, limit);
+                // Validar estado 
+                if (!string.IsNullOrWhiteSpace(status))
+                {
+                    var validStatuses = new List<string> { "lobby", "rounds", "ended" };
+                    if (!validStatuses.Contains(status.ToLower()))
+                    {
+                        return BadRequest(new
+                        {
+                            status = 400,
+                            msg = $"Client Error: Invalid status. Valid statuses are: {string.Join(", ", validStatuses)}"
+                        });
+                    }
+                }
+
+                var (games, totalCount) = await _gameService.SearchGamesAsync(name, status, page, limit);
 
                 var result = games.Select(game => new
                 {
@@ -116,15 +131,18 @@ namespace contaminados_grupoa_backend.Controllers
                     status = game.Status,
                     password = !string.IsNullOrEmpty(game.Password),
                     currentRound = game.CurrentRoundId,
-                    players = game.Players,
-                    enemies = game.Enemies
+                    players = game.Players,  
+                    playerCount = game.Players?.Count ?? 0,  
+                    enemies = game.Enemies,
+                    owner = game.Owner,
+                    createdAt = game.CreatedAt
                 }).ToList();
 
                 var response = new
                 {
                     status = 200,
                     msg = $"Search returned {result.Count} results",
-                    data = result 
+                    data = result  
                 };
 
                 return Ok(response);
@@ -850,6 +868,8 @@ namespace contaminados_grupoa_backend.Controllers
                 return BadRequest(new { status = 400, msg = $"Client Error: {ex.Message}" });
             }
         }
+
+        
     }
 
     public class GameCreateRequest

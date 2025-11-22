@@ -1,49 +1,49 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\",
+  "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\controllers\\gamescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\controllers\\gamescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\controllers\\gamescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\round.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\round.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\mongodbsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\mongodbsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\game_entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\round.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\round.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\models\\mongodbsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\models\\mongodbsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\pc\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "AbsoluteMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|c:\\users\\user\\desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{7AC15E3E-12FE-4C53-AA57-9F3C22E0B1D1}|contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj|solutionrelative:contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
@@ -54,8 +54,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 9,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -66,145 +70,138 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "contamiandos-grupoa-actualizado.http",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
-              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
-              "RelativeToolTip": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-11-21T01:42:07.504Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
-              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-21T01:35:47.525Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Game_Entity.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Models\\Game_Entity.cs",
-              "ViewState": "AgIAAJIAAAAAAAAAAAA4wDoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAkwKQAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T03:36:21.19Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "MongoDBSettings.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Models\\MongoDBSettings.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-20T21:27:39.956Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-20T21:27:39.956Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Round.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Round.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Round.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Models\\Round.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Round.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Models\\Round.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Models\\Round.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-20T05:24:31.793Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-20T05:24:31.793Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 2,
               "Title": "GameService.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Services\\GameService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Services\\GameService.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Services\\GameService.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Services\\GameService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Services\\GameService.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Services\\GameService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAH8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAIwGEAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T03:38:44.474Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\appsettings.json",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\appsettings.json",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-20T21:01:15.573Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Program.cs",
-              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Program.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Program.cs",
-              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-20T21:01:11.088Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "WeatherForecastController.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
-              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
-              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABSAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-19T03:39:50.822Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-20T21:01:15.573Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "gamesController.cs",
-              "DocumentMoniker": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
-              "ToolTip": "C:\\Users\\PC\\source\\repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\Controllers\\gamesController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4DAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAOcBAAAAAAAAAAAAAGMAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-19T03:39:30.41Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
+              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-21T01:35:47.525Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Program.cs",
+              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Program.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Program.cs",
+              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-20T21:01:11.088Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "contamiandos-grupoa-actualizado\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T03:39:50.822Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "contamiandos-grupoa-actualizado.http",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
+              "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
+              "RelativeToolTip": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-11-21T01:42:07.504Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 10,
               "Title": "contamiandos-grupoa-actualizado.csproj",
-              "DocumentMoniker": "C:\\Users\\PC\\Source\\Repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
               "RelativeDocumentMoniker": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
-              "ToolTip": "C:\\Users\\PC\\Source\\Repos\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
+              "ToolTip": "C:\\Users\\User\\Desktop\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
               "RelativeToolTip": "contamiandos-grupoa-actualizado\\contamiandos-grupoa-actualizado.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
