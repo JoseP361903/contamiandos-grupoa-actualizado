@@ -7,16 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 // CORS: permitir todo (ajusten si luego quieren algo más estricto)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy =>
-        {
-            policy
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .SetIsOriginAllowed(_ => true)  
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
+    });
 });
+
 
 // Opciones de routing: agregar siempre slash al final
 builder.Services.Configure<RouteOptions>(options =>
