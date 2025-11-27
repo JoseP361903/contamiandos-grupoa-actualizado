@@ -252,7 +252,7 @@
             }
         }
 
-        // agregue esto jp
+       
         private Dictionary<string, int> rols(int numberPlayers)
         {
             var rol = new Dictionary<string, int>();
